@@ -30,14 +30,8 @@ export default {
         'primary-container': '#e4e4cc',
         'on-primary-container': '#646652',
       },
-      borderRadius: {
-        lg: '2rem',
-        xl: '3rem',
-      },
-      fontFamily: {
-        headline: ['Vollkorn', 'serif'],
-        body: ['Space Grotesk', 'sans-serif'],
-      },
+      borderRadius: { lg: '2rem', xl: '3rem' },
+      fontFamily: { headline: ['Vollkorn', 'serif'], body: ['Space Grotesk', 'sans-serif'] },
       fontSize: {
         'headline-xl': ['48px', { lineHeight: '1.1', fontWeight: '700', letterSpacing: '-0.02em' }],
         'headline-lg': ['32px', { lineHeight: '1.2', fontWeight: '600' }],
