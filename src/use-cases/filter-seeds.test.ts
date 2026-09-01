@@ -1,19 +1,21 @@
 import { describe, it, expect } from 'vitest'
-import { filterSeeds, sortSeeds, type FilterOptions } from './filter-seeds'
-import type { Seed, Source } from '@entities/seed/seed'
+import { filterSeeds, sortSeeds } from './filter-seeds'
+import type { Seed } from '@entities/seed/seed'
 
-function makeSeed(overrides: Partial<Seed>): Seed {
+function makeSeed(o: Partial<Seed>): Seed {
   return {
-    id: overrides.id ?? 'x',
-    plantName: overrides.plantName ?? 'Seed',
-    source: overrides.source ?? 'bought',
-    year: overrides.year ?? 2024,
+    id: o.id ?? 'x',
+    plantName: o.plantName ?? 'Seed',
+    source: o.source ?? 'bought',
+    year: o.year ?? 2024,
     quantity: 'full',
     notes: '',
     createdAt: '2024-01-01T00:00:00.000Z',
-    ...overrides,
+    ...o,
   }
 }
+
+const ids = (seeds: Seed[]) => seeds.map((s) => s.id)
 
 describe('filterSeeds', () => {
   const seeds = [
@@ -28,23 +30,20 @@ describe('filterSeeds', () => {
     expect(filterSeeds(seeds, {})).toHaveLength(5)
   })
 
+  it('returns all seeds when sources array is empty', () => {
+    expect(filterSeeds(seeds, { sources: [] })).toHaveLength(5)
+  })
+
   it('returns only matching source when one filter is set', () => {
-    const result = filterSeeds(seeds, { sources: ['bought'] })
-    expect(result.map((s) => s.id)).toEqual(['a', 'e'])
+    expect(ids(filterSeeds(seeds, { sources: ['bought'] }))).toEqual(['a', 'e'])
   })
 
   it('returns matches across multiple sources', () => {
-    const result = filterSeeds(seeds, { sources: ['bought', 'saved'] })
-    expect(result.map((s) => s.id)).toEqual(['a', 'b', 'e'])
+    expect(ids(filterSeeds(seeds, { sources: ['bought', 'saved'] }))).toEqual(['a', 'b', 'e'])
   })
 
   it('returns empty array when no seeds match', () => {
     expect(filterSeeds([], { sources: ['bought'] })).toEqual([])
-  })
-
-  it('returns all seeds when sources array is empty', () => {
-    const opts: FilterOptions = { sources: [] }
-    expect(filterSeeds(seeds, opts)).toHaveLength(5)
   })
 })
 
@@ -55,16 +54,13 @@ describe('sortSeeds', () => {
     makeSeed({ id: 'mid', year: 2024 }),
   ]
 
-  it('sorts ascending by year by default', () => {
-    expect(sortSeeds(seeds).map((s) => s.id)).toEqual(['old', 'mid', 'new'])
-  })
-
-  it('sorts ascending explicitly', () => {
-    expect(sortSeeds(seeds, 'asc').map((s) => s.id)).toEqual(['old', 'mid', 'new'])
+  it('sorts ascending by year by default and explicitly', () => {
+    expect(ids(sortSeeds(seeds))).toEqual(['old', 'mid', 'new'])
+    expect(ids(sortSeeds(seeds, 'asc'))).toEqual(['old', 'mid', 'new'])
   })
 
   it('sorts descending explicitly', () => {
-    expect(sortSeeds(seeds, 'desc').map((s) => s.id)).toEqual(['new', 'mid', 'old'])
+    expect(ids(sortSeeds(seeds, 'desc'))).toEqual(['new', 'mid', 'old'])
   })
 
   it('handles empty array', () => {
@@ -80,9 +76,6 @@ describe('composed filter + sort', () => {
       makeSeed({ id: 'c', source: 'saved', year: 2021 }),
       makeSeed({ id: 'd', source: 'gifted', year: 2023 }),
     ]
-    const sources: Source[] = ['saved']
-    const filtered = filterSeeds(seeds, { sources })
-    const sorted = sortSeeds(filtered, 'asc')
-    expect(sorted.map((s) => s.id)).toEqual(['c', 'a'])
+    expect(ids(sortSeeds(filterSeeds(seeds, { sources: ['saved'] }), 'asc'))).toEqual(['c', 'a'])
   })
 })
