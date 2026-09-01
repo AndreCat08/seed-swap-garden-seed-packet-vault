@@ -17,12 +17,20 @@ interface FormState {
   notes: string
 }
 
-const INITIAL: FormState = {
-  plantName: '',
-  source: 'bought',
-  year: '',
-  quantity: 'full',
-  notes: '',
+const INITIAL: FormState = { plantName: '', source: 'bought', year: '', quantity: 'full', notes: '' }
+
+const inputClass =
+  'w-full bg-surface-lowest border border-outline-variant rounded-lg p-2 text-on-surface focus:border-secondary outline-none transition-colors'
+
+function Field({ id, label, children }: { id: string; label: string; children: React.ReactNode }) {
+  return (
+    <div className="space-y-1">
+      <label htmlFor={id} className="text-label-caps text-outline">
+        {label}
+      </label>
+      {children}
+    </div>
+  )
 }
 
 export function AddSeedModal({ open, onClose, onSave }: AddSeedModalProps) {
@@ -36,11 +44,10 @@ export function AddSeedModal({ open, onClose, onSave }: AddSeedModalProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    const year = parseInt(form.year, 10)
     const result = onSave({
       plantName: form.plantName,
       source: form.source,
-      year,
+      year: parseInt(form.year, 10),
       quantity: form.quantity,
       notes: form.notes,
     })
@@ -52,9 +59,6 @@ export function AddSeedModal({ open, onClose, onSave }: AddSeedModalProps) {
     setErrors([])
     onClose()
   }
-
-  const inputClass =
-    'w-full bg-surface-lowest border border-outline-variant rounded-lg p-2 text-on-surface focus:border-secondary outline-none transition-colors'
 
   return (
     <div
@@ -79,10 +83,7 @@ export function AddSeedModal({ open, onClose, onSave }: AddSeedModalProps) {
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div className="space-y-1">
-            <label htmlFor="plant-name" className="text-label-caps text-outline">
-              Plant Name
-            </label>
+          <Field id="plant-name" label="Plant Name">
             <input
               id="plant-name"
               type="text"
@@ -92,12 +93,9 @@ export function AddSeedModal({ open, onClose, onSave }: AddSeedModalProps) {
               onChange={(e) => set('plantName', e.target.value)}
               required
             />
-          </div>
+          </Field>
 
-          <div className="space-y-1">
-            <label htmlFor="seed-source" className="text-label-caps text-outline">
-              Seed Source
-            </label>
+          <Field id="seed-source" label="Seed Source">
             <select
               id="seed-source"
               className={inputClass}
@@ -110,13 +108,10 @@ export function AddSeedModal({ open, onClose, onSave }: AddSeedModalProps) {
                 </option>
               ))}
             </select>
-          </div>
+          </Field>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <label htmlFor="seed-year" className="text-label-caps text-outline">
-                Year / Exp
-              </label>
+            <Field id="seed-year" label="Year / Exp">
               <input
                 id="seed-year"
                 type="number"
@@ -128,11 +123,8 @@ export function AddSeedModal({ open, onClose, onSave }: AddSeedModalProps) {
                 onChange={(e) => set('year', e.target.value)}
                 required
               />
-            </div>
-            <div className="space-y-1">
-              <label htmlFor="seed-quantity" className="text-label-caps text-outline">
-                Quantity
-              </label>
+            </Field>
+            <Field id="seed-quantity" label="Quantity">
               <select
                 id="seed-quantity"
                 className={inputClass}
@@ -145,13 +137,10 @@ export function AddSeedModal({ open, onClose, onSave }: AddSeedModalProps) {
                   </option>
                 ))}
               </select>
-            </div>
+            </Field>
           </div>
 
-          <div className="space-y-1">
-            <label htmlFor="seed-notes" className="text-label-caps text-outline">
-              Notes
-            </label>
+          <Field id="seed-notes" label="Notes">
             <textarea
               id="seed-notes"
               placeholder="Growing tips..."
@@ -159,7 +148,7 @@ export function AddSeedModal({ open, onClose, onSave }: AddSeedModalProps) {
               value={form.notes}
               onChange={(e) => set('notes', e.target.value)}
             />
-          </div>
+          </Field>
 
           {errors.length > 0 && (
             <ul className="text-error text-xs space-y-1" role="alert">
