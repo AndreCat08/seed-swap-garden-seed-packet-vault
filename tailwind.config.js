@@ -38,6 +38,13 @@ export default {
         headline: ['Vollkorn', 'serif'],
         body: ['Space Grotesk', 'sans-serif'],
       },
+      fontSize: {
+        'headline-xl': ['48px', { lineHeight: '1.1', fontWeight: '700', letterSpacing: '-0.02em' }],
+        'headline-lg': ['32px', { lineHeight: '1.2', fontWeight: '600' }],
+        'body-md': ['16px', { lineHeight: '1.5', fontWeight: '400' }],
+        'label-caps': ['12px', { lineHeight: '1', fontWeight: '700', letterSpacing: '0.1em' }],
+        'mono-data': ['14px', { lineHeight: '1', fontWeight: '500', letterSpacing: '-0.01em' }],
+      },
       spacing: {
         gutter: '16px',
         'section-margin': '48px',
